@@ -1,0 +1,70 @@
+# config values - Last Revised: May. 4, 2011
+# TODO: 
+#
+
+#evergreen/opensrf values
+#
+#
+#evergreen url
+conifer-loc=
+#opensrf gateway
+opensrf-host=
+#org for evergreen
+conifer-org-unit=
+#unit number for evergreen org
+conifer-org-unit-num=
+
+#google book values
+#
+#
+google-host=http://books.google.com
+#google book user id
+user-id=
+#google book shelf number
+library-shelf=
+
+#solr values
+#
+#
+#solr server
+solr-loc=
+solr-fields=title,description,url,localid,source,mediaType,fileSize,id
+winspace-fields=title,description,url,localid,source,mediaType,fileSize,id
+winspace-options=facet=true&qt=standard&hl=true&hl.fl=title,description&hl.snippets=1&hl.simple.pre=<strong><em>&hl.simple.post=</em></strong>&hl.fragsize=50
+consolr-fields=id,title_display,subtitle_display,author_display,language_facet,pub_date,format
+spbook-fields=doc-id,Title,Abstract,DatePublished,Extent,common-id,Year
+spbook-options=facet=false&hl=true&hl.fl=Title,Abstract&hl.snippets=1&hl.simple.pre=<strong><em>&hl.simple.post=</em></strong>&hl.fragsize=100
+swoda-width=215
+swoda-height=138
+swoda-loc=http://ink.ourontario.ca
+
+#pane values 
+#
+#
+solr-seq=5
+bottom-seq=8
+etd-seq=5
+
+#scholars portal values
+#
+#
+spj-host=
+spb-host=
+
+#layout values
+#
+#
+#file for pane definitions 
+panes-file=panes.xml
+#minimun number for slot for left 
+left-min-slot=4
+#number of slots for middle pane 
+mid-avail-slots=10
+#minimun number for slot in middle pane 
+mid-min-slot=3
+#number of slots for right pane 
+right-avail-slots=10
+#minimun number for slot in right pane 
+right-min-slot=5
+#what param to use for page number in gbooks
+sift=page_number

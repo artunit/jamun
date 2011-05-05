@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- jamun.html
+        main layout
+
+        (c) Copyright GNU General Public License (GPL)
+        @author <a href="http://projectspjournal.ca">art rhyno</a>
+-->
+
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>jamun demo</title>
+
+<link rel="stylesheet" href="reset.css" />
+<link rel="stylesheet" href="text.css" />
+<link rel="stylesheet" href="960.css" />
+<link rel="stylesheet" href="greensky.css"/>
+<link rel="stylesheet" href="jamun.css" />
+	
+<script src="spAjaxUtil.js" type="text/javascript"></script>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+</head>
+<body onload="startup()">
+<div class="container_16">
+	<div class="grid_16">
+	
+	<div id="custom_header">
+        	<img src="jamun.jpg" class="logo" align="left"/>
+		jamun - just another modified uber notion
+	</div>
+	<input id="clear-button" class="clear-it" name="clear" type="button" 
+		onclick="javascript:clearSearchInfo();"
+		value="Clear" />
+
+	<span id="custom_logo">
+	<span id="gs-button" class="clear-it">
+	<input type="image" src="gs_logo.jpg" height="25" width="63"
+		onclick="javascript:submitGsSearch();" alt="Submit"/>
+		<a class="logo_link" target="_blank" href="javascript:submitGsSearch();">more »</a>
+	</span>
+	</span>
+
+
+
+	</div><!-- end .grid_16 -->
+	<div class="clear">
+	</div>
+
+	<div class="grid_16">
+	<div id="gs_results" class="grid_7 alpha"> 
+		<div id="cse" style="width: 100%;">
+		Loading
+		</div>
+
+	<script type="text/javascript">
+		var cnt = 0;
+		var lastSearch = null;
+		//places demo shows how to open with a search
+  		google.load('search', '1', {language : 'en', style : google.loader.themes.GREENSKY});
+		//how to suppress CSS
+	  	//google.load("search", "1", {"nocss" : true});
+  		var customSearchControl = null;
+  		var article_ind = false;
+
+		//hook for when google conduit in place
+  		google.setOnLoadCallback(function() {
+    			customSearchControl = new google.search.CustomSearchControl('003160729288916208210:ysnmojp0psc');
+    			customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    			var options = new google.search.DrawOptions();
+    			options.setAutoComplete(true);
+			customSearchControl.draw('cse', options);
+			customSearchControl.setSearchStartingCallback(this, captureForm);
+			//customSearchControl.setSearchCompleteCallback(this, finishForm);
+			customSearchControl.setSearchCompleteCallback(null,
+                                function() { finishForm(customSearchControl) });
+			}, 
+		true);
+
+                function startup() {
+                    //alert("foo");
+                    //document.getElementById('test').className = 'grid_0';
+                    requestContent('intro', 'intro_display','',false,true);
+			
+                }
+
+		function captureForm(form) {
+		}//captureForm
+
+		function changeSearchDiv(newWidth) {
+			var tagList = document.getElementsByTagName("form");
+			for (var i = 0; i < tagList.length; i++) {
+				if (tagList[i].className && 
+					tagList[i].className.indexOf("gsc-search-box") != -1) 
+				{
+					tagList[i].style.width=newWidth;
+				}//if
+			}//for
+		}
+
+		function changePane(paneSrc, seq, start, hits, query) {
+			/*
+			alert(paneSrc + '-results-' + seq + '-' + start + '-' +
+                                hits + '-q-' + query,paneSrc + '_results');
+			*/
+                	requestContent(paneSrc + '-results-' + seq + '-' + start + '-' + 
+				hits + '-q-' + query,paneSrc + '_results', paneSrc + '-results',
+				false,true);
+		}//changePane
+
+		//hook to get search string
+		function finishForm(form) {
+			if (ezProxyLinks('gs-title',document.getElementById('gs_results'),
+                                "http://ezproxy.uwindsor.ca/login?url="))
+			{
+				var theSearch = form.input.value + "";
+				theSearch = theSearch.replace(/\s/g,'+');
+				if (theSearch.length > 0 && theSearch.indexOf(lastSearch) == -1) {
+					changeSearchDiv("305px");
+					lastSearch = theSearch;
+					requestContent('spbook-hits-2-q-' + theSearch,'spbook_results', theSearch,true,false);
+					requestContent('leddy-hits-2-q-' + theSearch,'leddy_results', theSearch,true,false);
+					requestContent('etd-hits-2-q-' + theSearch,'etd_results', theSearch,true,false);
+					requestContent('swoda-hits-2-q-' + theSearch,'swoda_results', theSearch,true,false);
+					requestContent('spjournal-hits-4-q-' + theSearch,'spjournal_results', theSearch,true,false);
+					requestContent('gbook-hits-4-q-' + theSearch,'gbook_results', theSearch,true,false);
+				}//if
+			}//if
+			document.getElementById("jamun_intro").style.visibility = 'hidden'; 
+		}//finishForm
+	
+                function ezProxyLinks(classname, node, prefix) {
+                        if(!node) node = document.getElementsByTagName("body")[0];
+                        try {   
+                                var cselinks = node.getElementsByTagName("a");
+                                for(var i=0;i < cselinks.length; i++) {
+                                        var cName = cselinks[i].className + "";
+                                        if(cName.indexOf(classname) != -1) {
+                                                if (cselinks[i].href) {
+                                                        var tmpLink = cselinks[i].href + "";
+                                                        if (tmpLink.indexOf("google") == -1) {
+                                                                cselinks[i].href = prefix +
+                                                                        tmpLink;
+                                                        }//if tmpLink
+                                                }//if cselinks
+                                        }//if cName
+                                }//for
+                        } catch(ex) {
+                                return false;
+                        }//try
+                        return true;
+                }//ezProxyLinks	
+	</script>
+	<div id="jamun_intro">
+		So Google Scholar does not have an <a href="http://bibwild.wordpress.com/2010/01/13/google-scholar-does-not-allow-meta-search/">
+		option for meta-search</a> but there is a lot that can done with a <a href="http://www.google.com/cse/">Google
+		Custom Search Engine</a> (CSE). This is a mixture of solr and google, with lots of rough edges. Searching inside the
+		book is done as <a href="http://blog.ouseful.info/2010/12/08/google-books-library-shelves/">described here</a>. Our "shelf",
+		built from searching 100K of the 200K ISBNs in our catalogue is 
+		<a href="http://books.google.ca/books?uid=6367679745022456001&as_coll=1001&source=gbs_lp_bookshelf_list">here</a>. 
+	</div>
+	</div><!-- end .grid_6 -->
+
+	<div id="mid_display" class="grid_0">
+            <div id="spbook_results"></div>
+            <div id="leddy_results"></div>
+            <div id="etd_results"></div>
+            <div id="swoda_results"></div>
+	</div>
+
+	<div id="intro_display" class="grid_7 column-shading-left omega">
+	</div>
+
+	<div id="right_display" class="grid_0">
+                <div id="spjournal_results"></div>
+                <div id="gbook_results"></div>
+	</div>
+	</div>
+</div><!-- end .container_12 -->
+</body>
+</html>

@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--+
+    | Sitemap for Discovery Layer (jamun) - Mar. 2011
+    | Last Rev. May. 2011
+    |
+    | orig version: art rhyno (http://projectconifer.ca)
+    +-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0"
+>
+
+  <map:components>
+    <!-- we want properties in an easy to find place -->
+    <map:include-properties dir="../../../../config" />
+    <!-- ensure UTF-8 encoding -->
+    <map:serializers default="xml">
+        <serializer name="xml" mime-type="text/xml"
+            src="org.apache.cocoon.serialization.XMLSerializer"
+        >
+            <encoding>UTF-8</encoding>
+        </serializer>
+        <serializer name="html" mime-type="text/html; charset=UTF-8"
+            src="org.apache.cocoon.serialization.HTMLSerializer"
+        >
+            <encoding>UTF-8</encoding>
+        </serializer>
+        <map:serializer mime-type="text/javascript"
+            name="json" src="org.apache.cocoon.serialization.TextSerializer"
+        >
+            <encoding>UTF-8</encoding>
+        </map:serializer>
+    </map:serializers>
+  </map:components>
+
+  <map:pipelines>
+    <!--+
+        | jamun pipelines - internal
+        +-->
+    <map:pipeline id="internal-jamun" internal-only="true">
+        <map:match pattern="opensrf">
+            <map:generate type="jx" src="content/opensrf.xml"/>
+            <map:transform src="xslt/opensrf.xsl">
+                <map:parameter name="osrfHost"
+                    value="{global:opensrf-host}"/>
+            </map:transform>
+            <map:transform type="seth"/>
+            <!-- sort out latency issues with generic pass-thru -->
+            <map:transform src="xslt/as_is.xsl"/>
+            <map:transform src="xslt/response2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="opensrf-result-*">
+            <map:generate src="content/kickoff.xml"/>
+            <map:transform src="xslt/opensrf2json.xsl">
+                <map:parameter name="hits"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+    </map:pipeline>
+
+    <!--+
+        | jamun pipelines - test
+        +-->
+    <map:pipeline id="tests-jamun">
+        <map:match pattern="sethtest">
+            <map:generate src="content/seth.xml"/>
+            <map:transform type="seth"/>
+            <map:serialize type="xml"/>
+        </map:match>
+
+        <map:match pattern="hilighttest">
+            <map:generate src="content/seth.xml"/>
+            <map:transform type="seth"/>
+            <map:transform src="xslt/gbook_highlight2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+    </map:pipeline>
+
+    <!--+
+        | jamun pipelines - public
+        +-->
+    <map:pipeline id="public-jamun">
+        <map:match pattern="">
+            <map:read src="content/jamun.html"/>
+        </map:match>
+
+        <!-- pass in config values for javascript -->
+        <map:match pattern="settings.js">
+            <map:generate type="file" src="content/{global:panes-file}"/>
+            <map:transform src="xslt/js_settings.xsl">
+                <map:parameter name="left_min_slot"         
+                    value="{global:left-min-slot}"/>
+                <map:parameter name="mid_avail_slots"         
+                    value="{global:mid-avail-slots}"/>
+                <map:parameter name="mid_min_slot"         
+                    value="{global:mid-min-slot}"/>
+                <map:parameter name="right_avail_slots"         
+                    value="{global:right-avail-slots}"/>
+                <map:parameter name="right_min_slot"         
+                    value="{global:right-min-slot}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <!-- we don't use supercat but this is one approach if we did -->
+        <map:match pattern="mods-*">
+            <map:generate src="http://windsor.concat.ca/opac/extras/supercat/retrieve/mods/record/{1}"/>
+            <map:transform src="xslt/mods_snippet.xsl"/>
+            <map:serialize type="xml"/>
+        </map:match>
+
+        <!-- scholars portal pane -->
+        <map:match pattern="sp">
+            <map:read src="content/sp.html"/>
+        </map:match>
+
+        <!-- intro pane -->
+        <map:match pattern="intro">
+            <map:read src="content/intro.html"/>
+        </map:match>
+
+        <!-- jump to gbook page -->
+        <map:match pattern="gbook-hlpgs-*-**">
+            <map:generate src="content/kickoff.xml"/>
+            <map:transform src="xslt/gbook_highlight.xsl">
+                <map:parameter name="gbid"         
+                    value="{1}"/>
+                <map:parameter name="query"         
+                    value="{2}"/>
+                <map:parameter name="sift"         
+                    value="{global:sift}"/>
+            </map:transform>
+            <map:transform type="seth"/>
+            <map:transform src="xslt/gbook_highlight2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="gbsInfo-**">
+            <map:generate src="content/kickoff.xml"/>
+            <map:transform src="xslt/gbook_info.xsl">
+                <map:parameter name="isbns"         
+                    value="{1}"/>
+            </map:transform>
+            <map:transform type="seth"/>
+            <map:transform src="xslt/gbook_info2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <!--
+            sad to say, but our winspace (etd) index uses an older lucene format and
+            needs some special handling. 
+        -->
+        <map:match pattern="etd-hits-*-q-**">
+            <map:generate
+                src="{global:solr-loc}/winspace/select?version=1.0&amp;fl={global:winspace-fields}&amp;{global:winspace-options}&amp;rows={1}&amp;start=0&amp;q=text:({2})"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="etd-results-*-*-*-q-**">
+            <map:generate
+            src="{global:solr-loc}/winspace/select?version=1.0&amp;fl={global:winspace-fields}&amp;{global:winspace-options}&amp;rows={1}&amp;start={2}&amp;q=text:({4})"/>
+            <map:transform src="xslt/solr2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="seq"         
+                    value="{global:etd-seq}"/>
+                <map:parameter name="source"         
+                    value="etd"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <map:match pattern="swoda-hits-*-q-**">
+            <map:generate
+            src="{global:solr-loc}/swoda/select?version=1.0&amp;fl=id,title&amp;{global:winspace-options}&amp;rows={1}&amp;start=0&amp;q=linktext:({2})"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="swoda-results-*-*-*-q-**">
+            <map:generate
+            src="{global:solr-loc}/swoda/select?version=1.0&amp;fl=id,title,url&amp;{global:winspace-options}&amp;rows={1}&amp;start={2}&amp;q=linktext:({4})"/>
+            <map:transform src="xslt/swoda2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="width"         
+                    value="{global:swoda-width}"/>
+                <map:parameter name="height"         
+                    value="{global:swoda-height}"/>
+                <map:parameter name="seq"         
+                    value="{global:solr-seq}"/>
+                <map:parameter name="swoda"         
+                    value="{global:swoda-loc}"/>
+                <map:parameter name="source"         
+                    value="swoda"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <map:match pattern="consolr-hits-*-q-**">
+            <map:generate
+                src="{global:solr-loc}/conifer/select?version=2.2&amp;facet=false&amp;rows={1}&amp;q={2}"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="consolr-results-*-*-*-q-**">
+            <map:generate
+                src="{global:solr-loc}/conifer/select?version=2.2&amp;facet=false&amp;fl={global:consolr-fields}&amp;rows={1}&amp;start={2}&amp;q={4}"/>
+            <map:transform src="xslt/consolr2html.xsl">
+                <map:parameter name="rows"
+                        value="{1}"/>
+                <map:parameter name="start"
+                        value="{2}"/>
+                <map:parameter name="hits"
+                        value="{3}"/>
+                <map:parameter name="query"
+                        value="{4}"/>
+                <map:parameter name="seq"
+                        value="{global:solr-seq}"/>
+                <map:parameter name="source"
+                        value="consolr"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!--
+            testing for leddy web results, not much in the index yet
+        -->
+        <map:match pattern="leddy-hits-*-q-**">
+            <map:generate
+                src="{global:solr-loc}/leddy/select?rows={1}&amp;start=0&amp;q={2}"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="leddy-results-*-*-*-q-**">
+            <map:generate
+                src="{global:solr-loc}/leddy/select?rows={1}&amp;start={2}&amp;q={4}"/>
+            <map:transform src="xslt/solr2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="seq"         
+                    value="{global:solr-seq}"/>
+                <map:parameter name="source"         
+                    value="leddy"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!--
+            scholar portal journals
+        -->
+        <map:match pattern="spjournal-hits-*-q-**">
+            <map:generate
+                src="{global:spj-host}/journals/opensearch/1.1/search.xqy?c={1}&amp;q={2}"/>
+            <map:transform src="xslt/spjournal_atom2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="spjournal-results-*-*-*-q-**">
+            <map:generate
+                src="{global:spj-host}/journals/opensearch/1.1/search.xqy?c={1}&amp;p={2}&amp;q={4}"/>
+            <map:transform src="xslt/spjournal_atom2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="seq"         
+                    value="{global:bottom-seq}"/>
+                <map:parameter name="sphost"         
+                    value="{global:spj-host}"/>
+                <map:parameter name="source"         
+                    value="spjournal"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!--
+            scholar portal books
+        -->
+        <map:match pattern="spbook-hits-*-q-**">
+            <map:generate
+                src="{global:spb-host}/SolrRequest?raw=true&amp;fl=doc-id&amp;rows={1}&amp;start=0&amp;q={2}"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <!--
+            there are encoding issues in going direct, so we loop through seth for results
+        -->
+        <map:match pattern="spbook-results-*-*-*-q-**">
+            <map:generate src="content/kickoff.xml"/>
+            <map:transform src="xslt/spbook.xsl">
+                <map:parameter name="sphost"         
+                    value="{global:spb-host}"/>
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="spfields"         
+                    value="{global:spbook-fields}"/>
+                <map:parameter name="spoptions"         
+                    value="{global:spbook-options}"/>
+            </map:transform>
+            <map:transform type="seth"/>
+            <map:transform src="xslt/spbook2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="seq"         
+                    value="{global:solr-seq}"/>
+                <map:parameter name="source"         
+                    value="spbook"/>
+                <map:parameter name="spbookhost"         
+                    value="{global:spb-host}"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!--
+            gbook results
+        -->
+        <map:match pattern="gbook-hits-*-q-**">
+            <map:generate
+            src="{global:google-host}/books/feeds/users/{global:user-id}/collections/{global:library-shelf}/volumes?max-results={1}&amp;start-index=1&amp;q={2}"/>
+            <map:transform src="xslt/gbook_atom2json.xsl"/>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="gbook-results-*-*-*-q-**">
+            <map:generate
+            src="{global:google-host}/books/feeds/users/{global:user-id}/collections/{global:library-shelf}/volumes?max-results={1}&amp;start-index={2}&amp;q={4}"/>
+            <map:transform src="xslt/gbook_atom2html.xsl">
+                <map:parameter name="rows"         
+                    value="{1}"/>
+                <map:parameter name="start"         
+                    value="{2}"/>
+                <map:parameter name="hits"         
+                    value="{3}"/>
+                <map:parameter name="query"         
+                    value="{4}"/>
+                <map:parameter name="seq"         
+                    value="{global:solr-seq}"/>
+                <map:parameter name="ghost"         
+                    value="{global:google-host}"/>
+                <map:parameter name="source"         
+                    value="gbook"/>
+                <map:parameter name="userid"         
+                    value="{global:user-id}"/>
+                <map:parameter name="libraryshelf"         
+                    value="{global:library-shelf}"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <map:match pattern="gbook-detail-*-*-**">
+            <map:call function="sortOutIsbns">
+                <map:parameter name="gbookId"         
+                    value="{1}"/>
+                <map:parameter name="isbns"         
+                    value="{2}"/>
+                <map:parameter name="query"         
+                    value="{3}"/>
+                <map:parameter name="coniferOrg"         
+                    value="{global:conifer-org-unit-num}"/>
+            </map:call>
+        </map:match>
+
+        <!--
+            gbook title display
+        -->
+        <map:match pattern="gbook-expo">
+            <map:generate type="jx" src="content/gbookexpo.xml"/>
+            <map:transform type="cinclude"/>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <map:match pattern="gbook-expo-*-*-**">
+            <map:generate src="content/kickoff.xml"/>
+            <map:transform src="xslt/gbookexpo2html.xsl">
+                <map:parameter name="googleId"         
+                    value="{1}"/>
+                <map:parameter name="coniferId"         
+                    value="{2}"/>
+                <map:parameter name="query"         
+                    value="{3}"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!-- generic -->
+        <map:match pattern="*-hits-*-q-**">
+            <map:generate
+            src="{global:solr-loc}/winspace/select?version=1.0&amp;fl={global:winspace-fields}&amp;{global:winspace-options}&amp;rows={2}&amp;start=0&amp;q=text:({3})"/>
+            <map:transform src="xslt/solr2json.xsl">
+                <map:parameter name="rows"         
+                    value="{2}"/>
+            </map:transform>
+            <map:serialize type="json"/>
+        </map:match>
+
+        <map:match pattern="*-results-*-*-*-q-**">
+            <map:generate
+            src="{global:solr-loc}/winspace/select?version=1.0&amp;fl={global:winspace-fields}&amp;{global:winspace-options}&amp;rows={2}&amp;start={3}&amp;q=text:({5})"/>
+            <map:transform src="xslt/solr2html.xsl">
+                <map:parameter name="rows"         
+                    value="{2}"/>
+                <map:parameter name="start"         
+                    value="{3}"/>
+                <map:parameter name="hits"         
+                    value="{4}"/>
+                <map:parameter name="query"         
+                    value="{5}"/>
+                <map:parameter name="seq"         
+                    value="{global:solr-seq}"/>
+                <map:parameter name="source"         
+                    value="{1}"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+
+        <!-- generic readers -->
+        <map:match pattern="**.jpg">
+            <map:read src="image/{0}"/>
+        </map:match>
+    
+        <map:match pattern="**.css">
+            <map:read src="css/{0}"/>
+        </map:match>
+
+        <map:match pattern="**.js">
+            <map:read src="js/{0}"/>
+        </map:match>
+
+        <map:match pattern="**.xml">
+            <map:read src="content/{0}"/>
+        </map:match>
+    </map:pipeline>
+  </map:pipelines>
+
+  <map:flow language="javascript">
+    <map:script src="flow/jamun.js" />
+    <map:script src="flow/md5.js" />
+    <map:script src="flow/opensrf.js" />
+    <map:script src="flow/util.js" />
+  </map:flow>
+
+</map:sitemap>

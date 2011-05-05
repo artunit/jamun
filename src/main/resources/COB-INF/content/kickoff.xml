@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<!-- kickoff.xml: kickoff a sitemap pipeline 
+                @author <a href="http://projectconifer.ca">art rhyno</a>
+-->
+
+<content>
+        <dynamic-query/>
+</content>
+

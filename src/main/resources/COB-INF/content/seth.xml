@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<sethtarget xmlns:seth="http://seth.sourceforge.net">
+      <seth:execute-retrieval>
+        <!-- some testers -->
+        <!--
+        <seth:url>http://127.0.0.1:8080/cocoon</seth:url>
+        <seth:url>http://librarycog.uwindsor.ca</seth:url>
+        <seth:url>http://www.google.ca</seth:url>
+        -->
+
+        <!-- use specific User Agent -->
+        <seth:useragent>Mozilla/4.5</seth:useragent>
+
+        <!-- timeout (in seconds) -->
+        <seth:timeout>60</seth:timeout>
+
+        <!-- where to go -->
+        <!--
+        <seth:url>https://windsor.concat.ca/osrf-gateway-v1</seth:url>
+        -->
+        <seth:url>http://books.google.com</seth:url>
+        <seth:nvp name="id">gXwSu_MNqgsC</seth:nvp>
+        <seth:nvp name="q">water</seth:nvp>
+        <seth:sift>page_number</seth:sift>
+
+        <!-- GET or POST -->
+        <!--
+        <seth:method>GET</seth:method>
+        -->
+        <seth:method>GET</seth:method>
+        <seth:redirect>TRUE</seth:redirect>
+
+        <!-- redirect flag (true by default -->
+        <!--
+        <seth:redirect>FALSE</seth:redirect>
+        -->
+
+        <!-- use regular expression in text -->
+        <!--
+        <seth:regexp>[Pp]age*</seth:regexp>
+        -->
+
+        <!-- limit to certain tags -->
+        <!--
+        <seth:limit>a,p</seth:limit>
+        -->
+
+        <!-- set name value pairs, put in query string for gets -->
+        <!--
+        <seth:nvp name="sport">hockey</seth:nvp>
+        -->
+        <!-- cookie support, name, path, domain, age, date,
+                and secure flag are all expressed as attributes
+        -->
+        <!--
+        <seth:cookie name="dog">chewy</seth:cookie>
+        -->
+
+        <!-- put extra information in log if true -->
+        <seth:debug>TRUE</seth:debug>
+      </seth:execute-retrieval>
+</sethtarget>

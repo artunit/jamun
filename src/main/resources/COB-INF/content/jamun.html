@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!-- jamun.html
+        main layout
+
+        (c) Copyright GNU General Public License (GPL)
+        @author <a href="http://projectconifer.ca">art rhyno</a>
+-->
+
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>jamun demo</title>
+
+<link rel="stylesheet" href="reset.css" />
+<link rel="stylesheet" href="text.css" />
+<link rel="stylesheet" href="960.css" />
+<link rel="stylesheet" href="greensky.css"/>
+<link rel="stylesheet" href="jamun.css" />
+	
+<script type="text/javascript">
+	var LEFT = 0;
+	var MIDDLE = 1;
+	var RIGHT = 2;
+	var ALL = 3;
+
+	function paneObj(div, count, start, panel) {
+		this.div = div;
+		this.count = count;
+		this.start = start;
+		this.panel = panel;
+		
+	}//paneObj
+
+	var paneObjs = new Array();
+</script>
+
+<!-- this is dynamically generated -->
+<script src="settings.js" type="text/javascript"></script>
+
+<!-- static javascript -->
+<script src="jamun.js" type="text/javascript"></script>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+</head>
+<body onload="startup()">
+<div class="container_16">
+	<div class="grid_16">
+	
+	<div id="custom_header">
+        	<img src="jamun.jpg" class="logo" align="left"/>
+		jamun - just another modified uber notion
+	</div>
+
+	<input id="clear-button" class="clear-it" name="clear" type="button" 
+		onclick="javascript:clearSearch();"
+		value="Clear" />
+
+	<span id="custom_logo">
+	<span id="gs-button" class="clear-it">
+        <input id="cse-close-button" name="cse-close" type="button"
+                onclick="javascript:clearCSESearch();"
+                value="x"/>
+	<input type="image" src="gs_logo.jpg" height="25" width="63"
+		onclick="javascript:submitGsSearch();" alt="Submit"></input>
+		<a class="logo_link" href="javascript:submitGsSearch()">more »</a>
+	</span>
+	</span>
+
+
+
+	</div><!-- end .grid_16 -->
+	<div class="clear">
+	</div>
+
+	<div class="grid_16">
+	<div id="gs_results" class="grid_7 alpha"> 
+		<div id="cse" style="width: 100%;">
+		Loading
+		</div>
+
+	<script type="text/javascript">
+		String.prototype.equalsIgnoreCase=jamunEqualsIgnoreCase;
+		String.prototype.equals=jamunEquals;
+
+		function jamunEquals(arg){
+        		return (this.toString()==arg.toString());
+		}
+
+		function jamunEqualsIgnoreCase(arg) {               
+			return (new String(this.toString().toLowerCase())==(new
+				String(arg)).toLowerCase());
+		}
+
+
+		var cnt = 0;
+		var lastSearch = null;
+		var query = null;
+		var reloaded = false;
+		var url = window.location.toString();
+		url.match(/\?(.+)$/);
+		var params = RegExp.$1;
+		var params = params.split("&");
+		var queryStringList = {};
+
+		for(var i=0;i<params.length;i++)
+		{
+			var tmp = params[i].split("=");
+				
+			queryStringList[tmp[0]] = unescape(tmp[1]);
+		}//for
+		if (queryStringList['q']) {
+			query = queryStringList['q'];
+			query = query.replace(/\s/g,'+');
+		}//if
+
+		//places demo shows how to open with a search
+  		google.load('search', '1', {language : 'en', style : google.loader.themes.GREENSKY});
+		//how to suppress CSS
+	  	//google.load("search", "1", {"nocss" : true});
+  		var customSearchControl = null;
+  		var article_ind = false;
+
+		//hook for when google conduit in place
+  		google.setOnLoadCallback(function() {
+    			customSearchControl = new google.search.CustomSearchControl('003160729288916208210:ysnmojp0psc');
+			//for 10 results
+    			//customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+			//for 8 results
+    			//customSearchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+			//for 4 results
+    			customSearchControl.setResultSetSize(google.search.Search.SMALL_RESULTSET);
+    			var options = new google.search.DrawOptions();
+    			options.setAutoComplete(true);
+			customSearchControl.draw('cse', options);
+			customSearchControl.setSearchStartingCallback(this, captureForm);
+			//customSearchControl.setSearchCompleteCallback(this, finishForm);
+			customSearchControl.setSearchCompleteCallback(null,
+                                function() { finishForm(customSearchControl)});
+			//alert("query" + query);
+			if (query != null) {
+				if (query.length > 0){
+					query = query.replace(/\+/g,' ');
+					customSearchControl.execute(query);
+				}
+			}
+			}
+	, 
+		true);
+
+                function startup() {
+			if (query == null) 
+				requestContent('intro', 'intro_display','',false,true);
+                }
+
+		function captureForm(form) {
+			var theSearch = form.input.value + "";
+			//theSearch = theSearch.replace(/\s/g,'+');
+			//alert('foo: ' + theSearch );
+			var strQuery = "";
+			if (query != null)
+				strQuery = query;
+			//if (theSearch.length > 0 && strQuery.length > 0 && theSearch.length ==0 && !strQuery.equalsIgnoreCase(theSearch)) {
+			if (theSearch.length > 0 && !strQuery.equalsIgnoreCase(theSearch)) {
+				checkinLeft = reloaded = false;
+			}
+			
+			if (!checkinLeft && !reloaded && theSearch.length > 0 && !strQuery.equalsIgnoreCase(theSearch)) {
+				reloaded = true;
+				customSearchControl.cancelSearch();
+				//customSearchControl.clearAllResults();
+				//clearRequests();
+				query = lastSearch = null;
+				//alert(reloaded + " - " + strQuery + " -> " + theSearch + ":" + strQuery.equalsIgnoreCase(theSearch));
+				//window.location.href = "./?q=" + theSearch;
+				//customSearchControl = null;	
+				//window.location.replace("./?q=" + theSearch);
+				window.location.href = "./?q=" + theSearch;
+				//document.location.search = theSearch;
+			}
+		}//captureForm
+
+		function changeSearchDiv(newWidth) {
+			var tagList = document.getElementsByTagName("form");
+			for (var i = 0; i < tagList.length; i++) {
+				if (tagList[i].className && 
+					tagList[i].className.indexOf("gsc-search-box") != -1) 
+				{
+					tagList[i].style.width=newWidth;
+				}//if
+			}//for
+		}
+
+		function changePane(paneSrc, seq, start, hits, query) {
+			/*
+			alert(paneSrc + '-results-' + seq + '-' + start + '-' +
+                                hits + '-q-' + query,paneSrc + '_results');
+			*/
+                	
+            requestContent(paneSrc + '-results-' + seq + '-' + start + '-' + 
+				hits + '-q-' + query,paneSrc + '_results', paneSrc + '-results',
+				false,true);
+		}//changePane
+
+		//hook to get search string
+		function finishForm(form) {
+			var theSearch = form.input.value + "";
+			theSearch = theSearch.replace(/\s/g,'+');
+			if  (!reloaded && ezProxyLinks('gs-title',document.getElementById('gs_results'),
+                                "http://ezproxy.uwindsor.ca/login?url=") && !checkinLeft)
+			{
+				//if (theSearch.length==0 && theSearch.length > 0 && !theSearch.equalsIgnoreCase(lastSearch)) {
+				if (theSearch.length > 0 && !theSearch.equalsIgnoreCase(lastSearch)) {
+					//alert(theSearch.length + " start search" + !theSearch.equalsIgnoreCase(lastSearch));
+					changeSearchDiv("305px");
+					lastSearch = theSearch;
+					for (i=0; i< paneObjs.length; i++) {
+						//alert(i + "=> " + paneObjs[i].div);
+						requestContent('./' + paneObjs[i].div + '-hits-' +
+							paneObjs[i].count + '-q-' + theSearch, 
+							paneObjs[i].div + '_results', theSearch,
+							true, false);
+					}//for
+				}//if
+				document.getElementById("jamun_intro").style.visibility = 'hidden'; 
+			}//if
+		}//finishForm
+
+		function clearSearch() {
+			if (query != null) {
+				query = null;
+				window.location.replace("./");
+			} else
+				clearSearchInfo();
+		}//clearSearch
+
+                function ezProxyLinks(classname, node, prefix) {
+                        if(!node) node = document.getElementsByTagName("body")[0];
+                        try {   
+                                var cselinks = node.getElementsByTagName("a");
+                                for(var i=0;i < cselinks.length; i++) {
+                                        var cName = cselinks[i].className + "";
+                                        if(cName.indexOf(classname) != -1) {
+                                                if (cselinks[i].href) {
+                                                        var tmpLink = cselinks[i].href + "";
+                                                        if (tmpLink.indexOf("google") == -1 &&
+								tmpLink.indexOf(prefix) == -1) 
+							{
+                                                                cselinks[i].href = prefix +
+                                                                        tmpLink;
+                                                        }//if tmpLink
+                                                }//if cselinks
+                                        }//if cName
+                                }//for
+                        } catch(ex) {
+                                return false;
+                        }//try
+                        return true;
+                }//ezProxyLinks
+
+	</script>
+	<div id="spjournal_results"></div>
+	<div id="jamun_intro">
+		So Google Scholar does not have an <a href="http://bibwild.wordpress.com/2010/01/13/google-scholar-does-not-allow-meta-search/">
+		option for meta-search</a> but there is a lot that can done with a <a href="http://www.google.com/cse/">Google
+		Custom Search Engine</a> (CSE). This is a mixture of solr and google, with lots of rough edges. Searching inside the
+		book is done as <a href="http://blog.ouseful.info/2010/12/08/google-books-library-shelves/">described here</a>. Our "shelf",
+		built from searching 100K of the 200K ISBNs in our catalogue is 
+		<a href="http://books.google.ca/books?uid=6367679745022456001&as_coll=1001&source=gbs_lp_bookshelf_list">here</a>. 
+	</div>
+            
+	</div><!-- end .grid_6 -->
+
+	<div id="mid_display" class="grid_0">
+            <div id="consolr_results"></div>
+            <div id="leddy_results"></div>
+            <div id="etd_results"></div>
+            <div id="swoda_results"></div>
+	</div>
+
+	<div id="intro_display" class="grid_7 column-shading-left omega">
+	</div>
+
+	<div id="right_display" class="grid_0">
+                <div id="gbook_results"></div>
+            	<div id="spbook_results"></div>
+	</div>
+	</div>
+</div><!-- end .container_16 -->
+</body>
+</html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<title>
+		Google Book Preview
+		</title>
+		<link rel="stylesheet" href="reset.css" />
+		<link rel="stylesheet" href="text.css" />
+		<link rel="stylesheet" href="960.css" />
+		<link rel="stylesheet" href="greensky.css"/>
+		<link rel="stylesheet" href="jamun.css" />
+    		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    		<script type="text/javascript">
+      			google.load("books", "0");
+      			var bookViewer;
+			var pages  = new Array();
+			var currpage = 0;
+
+			<jx:if test="#{pglen &gt; 0}" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+				<jx:forEach select="#{pages}" var="page" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+					pages[pages.length] = ${page};
+ 				</jx:forEach> 
+			</jx:if>
+
+			<![CDATA[
+      			function initialize(theid) {
+        			var viewerDiv = document.getElementById("viewerCanvas");
+        			bookViewer = new google.books.DefaultViewer(viewerDiv);
+        			bookViewer.load(theid, handleNotFound, pageCheck);
+      			}
+
+      			function handleNotFound() {
+        			// Developer may want to hide the viewer div or present an error
+        			alert("Error loading the book preview!");
+      			}
+
+			function pageSelect() {
+				var pg = document.getElementById("pageNum").value;
+			}
+			function pageCheck() {
+				if (pages.length > 0) {
+					//bookViewer.goToPage(pages[0]);
+					//bookViewer.highlight('${query}');
+					if (bookViewer.goToPage(pages[0])) {
+						jumpPage(pages[0]);
+					} else {
+						pgSpan.style.backgroundColor = "FFFFA5";
+					}
+				}
+			}
+
+			function jumpPage(bookPg) {
+				for (i=0; i< pages.length; i++) {
+					var pgSpan = document.getElementById("pg_"+pages[i]);
+					if (pages[i] == bookPg) {
+						pgSpan.style.backgroundColor = "FFFFA5";
+						currpage = i;
+					} else
+						pgSpan.style.backgroundColor = "white";
+				}
+				if (bookViewer.goToPage(bookPg)) 
+					bookViewer.highlight('${query}');
+				else
+					alert("Sorry, page " + bookPg + " is not available in preview");
+			}
+
+			function jumpNext() {
+				if ((currpage + 1) < pages.length) 
+					jumpPage(pages[++currpage]);
+				else 
+					alert("You are at the last page with match");
+			}
+
+			function jumpPrev() {
+				if (currpage - 1 >= 0) 
+					jumpPage(pages[--currpage]);
+				else 
+					alert("You are at the first page with match");
+			}
+
+			function reportPage() {
+				alert("This is page " + bookViewer.getPageNumber());
+			}
+
+      			google.setOnLoadCallback(function() {
+        			initialize("ISBN:${isbn}");
+      			});
+			]]>
+
+    		</script>
+	</head>
+	<body onload="javascript:pageCheck();">
+	<div class="container_16">
+        <div class="grid_16">
+
+        <div id="custom_header">
+	<img src="${thumbnail}" class="logo gbook_detail" align="left">
+		<cinclude:include src="cocoon:/mods-${bibId}" 
+			xmlns:cinclude="http://apache.org/cocoon/include/1.0"/>
+	</img>
+        </div>
+
+	<br clear="left"/>
+
+	<ul>
+	<jx:forEach select="#{statuses}" var="copy" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+		<li>Location: <strong>${copy.location}</strong></li>
+		<li>Call Number: <strong>${copy.callNum} (${copy.status})</strong></li>
+		<li><a class="pg_link" href="http://windsor.concat.ca/opac/en-CA/skin/uwin/xml/rdetail.xml?r=${bibId}">
+		Details in Catalogue</a></li>
+		<li><a class="pg_link" href="http://books.google.com/books?id=${gbookId}&amp;q=${query}">
+		Details at Google Books</a></li>
+	</jx:forEach> 
+	</ul>
+
+        <div class="grid_16">
+	<jx:if test="#{embed}" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+		<div class="grid_10 alpha">
+          	<div id="viewerCanvas" style="width: 600px; height: 700px">
+            		The viewer for this book has not loaded.
+          	</div>
+		</div>
+	</jx:if>
+	<div class="grid_4 omega leftspace">
+	<jx:if test="#{pglen &gt; 0}" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+		Pages that contain <i>"${query}"</i>:
+		<jx:forEach select="#{pages}" var="page" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+			<span id="pg_${page}"> 
+				<a class="pg_link" href="javascript:jumpPage(${page})">${page}</a>
+			</span>
+		</jx:forEach> 
+		<jx:if test="#{pglen &gt; 1}" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+		<ul>
+			<li><a class="pg_link" href="javascript:jumpNext()">
+				Jump to next page with match
+			</a></li>
+			<li><a class="pg_link" href="javascript:jumpPrev()">
+				Jump to previous page with match
+			</a></li>
+		</ul>
+		</jx:if>
+	</jx:if>
+	</div>
+
+
+
+	</div><!-- end grid class -->
+	</div><!-- end grid class -->
+	</div><!-- end grid -->
+	
+	</body>
+</html>

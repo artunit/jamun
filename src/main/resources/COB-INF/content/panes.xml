@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!-- panes.xml: list panes for jamun display
+                @author <a href="http://projectconifer.ca">art rhyno</a>
+-->
+<panes>
+	<!-- scholars portal journal pane -->
+	<pane>
+		<div>spjournal</div>
+		<count>4</count>
+		<start>1</start>
+		<panel>LEFT</panel>
+	</pane>
+	<!-- conifer solr pane -->
+	<pane>
+		<div>consolr</div>
+		<count>4</count>
+		<start>0</start>
+		<panel>MIDDLE</panel>
+	</pane>
+	<!-- leddy search engine pane -->
+	<pane>
+		<div>leddy</div>
+		<count>2</count>
+		<start>0</start>
+		<panel>MIDDLE</panel>
+	</pane>
+	<!-- etd pane -->
+	<pane>
+		<div>etd</div>
+		<count>2</count>
+		<start>0</start>
+		<panel>MIDDLE</panel>
+	</pane>
+	<!-- swoda local history pane -->
+	<pane>
+		<div>swoda</div>
+		<count>2</count>
+		<start>0</start>
+		<panel>MIDDLE</panel>
+	</pane>
+	<!-- gbooks pane -->
+	<pane>
+		<div>gbook</div>
+		<count>4</count>
+		<start>1</start>
+		<panel>RIGHT</panel>
+	</pane>
+	<!-- scholars portal book pane -->
+	<pane>
+		<div>spbook</div>
+		<count>2</count>
+		<start>0</start>
+		<panel>RIGHT</panel>
+	</pane>
+</panes>

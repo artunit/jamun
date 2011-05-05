@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opensrf id="osrf" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+	<service>
+		${service}
+	</service>
+	<method>
+		${method}
+	</method>
+	<parms>
+	<jx:forEach select="#{parms}" var="parm">
+		<parm>
+			${parm}
+		</parm>
+ 	</jx:forEach> 
+	</parms>
+</opensrf>

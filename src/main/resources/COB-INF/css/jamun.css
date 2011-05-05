@@ -1,0 +1,204 @@
+.grid_0{
+    display: none;
+    width:0px;
+}
+
+/*
+div.gsc-control-cse form.gsc-search-box {
+	width: 305px;
+}
+*/
+
+.logo {
+  padding: 0 5px 0 0;
+}
+
+.gbook_detail {
+  background-color: #E1F3DA;
+}
+
+.leftspace {
+  padding: 0 0 0 5px;
+}
+.maintitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+.subtitle {
+  font-size: 18px;
+}
+.bibdetails {
+  font-size: 14px;
+}
+
+.pg_link {
+  text-decoration: none;
+  padding: 0 3px; 
+}
+
+#custom_logo {
+  position: relative;
+  top: 75px;
+  left: 150px; 
+  z-index: 100 !important; 
+}
+.etd-title {
+  text-decoration: none;
+  /* padding: 0 8px 25px 0; */
+  display: block;
+  padding: 0 6px; 
+  font-size: 14px;
+  line-height: 17px; 
+  height: 1.4em;
+  color: #0066CC;
+}
+
+.etd-snippet {
+/*
+  position: relative;
+  top: 250px;
+*/
+  position: relative !important;
+  top: 20px !important;
+  background-color: pink;
+}
+
+
+.test-snippet {
+  position: relative !important;
+  text-decoration: none;
+  display: block;
+  padding: 0 9px; 
+  font-size: 14px;
+  line-height: 17px; 
+  color: #454545;
+}
+
+
+#etdResults {
+	position: relative;
+	top: -23px;
+}
+
+#jamun_etd .gsc-resultsRoot  {
+	position: relative;
+	top: -23px;
+}
+#custom_header {
+	font-family: "Trebuchet MS", sans-serif;
+	font-size: 1.5em;
+}
+#etd_caption {
+	/* visibility: hidden; */
+	font-family: "Trebuchet MS", sans-serif;
+	font-size: 1.1em;
+}
+.logo_link {
+	text-decoration: none !important;
+}
+.logo_img {
+}
+
+#article_caption {
+	position: relative;
+	top: 40px;
+	left: -475px;
+	visibility: hidden;
+}
+
+#jamun_intro {
+	font-family: "Trebuchet MS", sans-serif;
+}
+
+.clear-it {
+  display: none;
+}
+
+#clear-button {
+  /* background-color: #A9DA92  !important; */ 
+  background-color: #E1F3DA !important; 
+  position: relative;
+  top: 36px;
+  right: -280px;
+  z-index: 100 !important;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  color: #302E2A;
+  border: 1px solid !important;
+  border-color: #94CC7A !important;
+  padding: 3px 8px !important; 
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+-webkit-box-shadow: 0 1px 2px #999;
+}
+
+#cse-close-button {
+  /* background-color: #A9DA92  !important; */ 
+  background-color: #E1F3DA !important; 
+  position: relative;
+  top: -5px;
+  right: -140px; 
+  z-index: 100 !important;
+  font-family: inherit;
+  font-size: 13px;
+  /* font-weight: bold; */
+  color: #302E2A;
+  border: 1px solid !important;
+  border-color: #94CC7A !important;
+  padding: 1px 2px !important; 
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+-webkit-box-shadow: 0 1px 2px #999;
+}
+
+.close-button {
+  /* background-color: #A9DA92  !important; */ 
+  background-color: #E1F3DA !important; 
+  position: relative;
+  float: right;
+/*
+  top: 0;
+  right: 0; 
+  top: -10px;
+  right: -350px; 
+*/
+  z-index: 100 !important;
+  font-family: inherit;
+  font-size: 13px;
+  /* font-weight: bold; */
+  color: #302E2A;
+  border: 1px solid !important;
+  border-color: #94CC7A !important;
+  padding: 1px 2px !important; 
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+-webkit-box-shadow: 0 1px 2px #999;
+}
+
+.bottom_hr {
+  width: 90%;
+  height: 1px;
+  border: 0;
+  background-color: #CCC;
+  background: #CCC;
+}
+
+.column-shading-left {
+  padding-left: 5px;
+  border-left: 1px solid #CCC;
+}
+.column-shading-right {
+  padding-right: 5px;
+  border-right: 1px solid #CCC;
+}
+.column-shading-top {
+  padding-top: 5px;
+  border-top: 1px solid #CCC;
+}
+.column-shading-bottom {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #CCC;
+}
+
+
