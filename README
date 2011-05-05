@@ -3,7 +3,7 @@ Last Revised: May 2011
 
 There must be a config.properties file, the outline is here:
 
-    https://github.com/artunit/jamun/config/config.properties.sample
+    https://github.com/artunit/jamun/blob/master/config/config.properties.sample
 
 Fill in the values, copy this to config.properties and place it in the "config" directory 
 identified below.
