@@ -65,17 +65,16 @@
 	</span>
 	</span>
 
-
-
 	</div><!-- end .grid_16 -->
 	<div class="clear">
 	</div>
 
 	<div class="grid_16">
 	<div id="gs_results" class="grid_7 alpha"> 
-		<div id="cse" style="width: 100%;">
+		
+    <div id="cse" style="width: 100%;">
 		Loading
-		</div>
+    </div>
 
 	<script type="text/javascript">
 		String.prototype.equalsIgnoreCase=jamunEqualsIgnoreCase;
@@ -121,140 +120,120 @@
 
 		//hook for when google conduit in place
   		google.setOnLoadCallback(function() {
-    			customSearchControl = new google.search.CustomSearchControl('003160729288916208210:ysnmojp0psc');
+            customSearchControl = new google.search.CustomSearchControl('003160729288916208210:ysnmojp0psc');
 			//for 10 results
-    			//customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            //customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
 			//for 8 results
-    			//customSearchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+            //customSearchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
 			//for 4 results
-    			customSearchControl.setResultSetSize(google.search.Search.SMALL_RESULTSET);
-    			var options = new google.search.DrawOptions();
-    			options.setAutoComplete(true);
+            customSearchControl.setResultSetSize(google.search.Search.SMALL_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
 			customSearchControl.draw('cse', options);
 			customSearchControl.setSearchStartingCallback(this, captureForm);
 			//customSearchControl.setSearchCompleteCallback(this, finishForm);
 			customSearchControl.setSearchCompleteCallback(null,
-                                function() { finishForm(customSearchControl)});
-			//alert("query" + query);
-			if (query != null) {
-				if (query.length > 0){
-					query = query.replace(/\+/g,' ');
-					customSearchControl.execute(query);
-				}
-			}
-			}
-	, 
-		true);
+                function() { finishForm(customSearchControl)});
+                    if (query != null) {
+                        if (query.length > 0){
+                            query = query.replace(/\+/g,' ');
+                            customSearchControl.execute(query);
+                        }//if
+                    }//if
+                } , true);
 
-                function startup() {
-			if (query == null) 
-				requestContent('intro', 'intro_display','',false,true);
-                }
+            function startup() {
+                if (query == null) 
+                    requestContent('intro', 'intro_display','',false,true);
+            }//startup
 
-		function captureForm(form) {
-			var theSearch = form.input.value + "";
-			//theSearch = theSearch.replace(/\s/g,'+');
-			//alert('foo: ' + theSearch );
-			var strQuery = "";
-			if (query != null)
-				strQuery = query;
-			//if (theSearch.length > 0 && strQuery.length > 0 && theSearch.length ==0 && !strQuery.equalsIgnoreCase(theSearch)) {
-			if (theSearch.length > 0 && !strQuery.equalsIgnoreCase(theSearch)) {
-				checkinLeft = reloaded = false;
-			}
-			
-			if (!checkinLeft && !reloaded && theSearch.length > 0 && !strQuery.equalsIgnoreCase(theSearch)) {
-				reloaded = true;
-				customSearchControl.cancelSearch();
-				//customSearchControl.clearAllResults();
-				//clearRequests();
-				query = lastSearch = null;
-				//alert(reloaded + " - " + strQuery + " -> " + theSearch + ":" + strQuery.equalsIgnoreCase(theSearch));
-				//window.location.href = "./?q=" + theSearch;
-				//customSearchControl = null;	
-				//window.location.replace("./?q=" + theSearch);
-				window.location.href = "./?q=" + theSearch;
-				//document.location.search = theSearch;
-			}
-		}//captureForm
+            function captureForm(form) {
+                var theSearch = form.input.value + "";
+                var strQuery = "";
+                if (query != null)
+                    strQuery = query;
+                if (theSearch.length > 0 && !strQuery.equalsIgnoreCase(theSearch)) 
+                    checkinLeft = reloaded = false;
+                if (!checkinLeft && !reloaded && theSearch.length > 0 && 
+                    !strQuery.equalsIgnoreCase(theSearch)) 
+                {
+                    reloaded = true;
+                    customSearchControl.cancelSearch();
+                    query = lastSearch = null;
+                    window.location.href = "./?q=" + theSearch;
+                }//if
+            }//captureForm
 
-		function changeSearchDiv(newWidth) {
-			var tagList = document.getElementsByTagName("form");
-			for (var i = 0; i < tagList.length; i++) {
-				if (tagList[i].className && 
-					tagList[i].className.indexOf("gsc-search-box") != -1) 
-				{
-					tagList[i].style.width=newWidth;
-				}//if
-			}//for
-		}
+            function changeSearchDiv(newWidth) {
+                var tagList = document.getElementsByTagName("form");
+                for (var i = 0; i < tagList.length; i++) {
+				    if (tagList[i].className && 
+					    tagList[i].className.indexOf("gsc-search-box") != -1) 
+				    {
+					    tagList[i].style.width=newWidth;
+				    }//if
+			    }//for
+		    }//changeSearchDiv
 
-		function changePane(paneSrc, seq, start, hits, query) {
-			/*
-			alert(paneSrc + '-results-' + seq + '-' + start + '-' +
-                                hits + '-q-' + query,paneSrc + '_results');
-			*/
-                	
-            requestContent(paneSrc + '-results-' + seq + '-' + start + '-' + 
-				hits + '-q-' + query,paneSrc + '_results', paneSrc + '-results',
-				false,true);
-		}//changePane
+            function changePane(paneSrc, seq, start, hits, query) {
+                requestContent(paneSrc + '-results-' + seq + '-' + start + '-' + 
+				    hits + '-q-' + query,paneSrc + '_results', paneSrc + '-results',
+				    false,true);
+		    }//changePane
 
-		//hook to get search string
-		function finishForm(form) {
-			var theSearch = form.input.value + "";
-			theSearch = theSearch.replace(/\s/g,'+');
-			if  (!reloaded && ezProxyLinks('gs-title',document.getElementById('gs_results'),
+		    //hook to get search string
+		    function finishForm(form) {
+			    var theSearch = form.input.value + "";
+			    theSearch = theSearch.replace(/\s/g,'+');
+			    if  (!reloaded && ezProxyLinks('gs-title',document.getElementById('gs_results'),
                                 "http://ezproxy.uwindsor.ca/login?url=") && !checkinLeft)
-			{
-				//if (theSearch.length==0 && theSearch.length > 0 && !theSearch.equalsIgnoreCase(lastSearch)) {
-				if (theSearch.length > 0 && !theSearch.equalsIgnoreCase(lastSearch)) {
-					//alert(theSearch.length + " start search" + !theSearch.equalsIgnoreCase(lastSearch));
-					changeSearchDiv("305px");
-					lastSearch = theSearch;
-					for (i=0; i< paneObjs.length; i++) {
-						//alert(i + "=> " + paneObjs[i].div);
-						requestContent('./' + paneObjs[i].div + '-hits-' +
-							paneObjs[i].count + '-q-' + theSearch, 
-							paneObjs[i].div + '_results', theSearch,
-							true, false);
-					}//for
-				}//if
-				document.getElementById("jamun_intro").style.visibility = 'hidden'; 
-			}//if
-		}//finishForm
+			    {
+				    if (theSearch.length > 0 && !theSearch.equalsIgnoreCase(lastSearch)) {
+					    changeSearchDiv("305px");
+					    lastSearch = theSearch;
+					    for (i=0; i< paneObjs.length; i++) {
+						    requestContent('./' + paneObjs[i].div + '-hits-' +
+							    paneObjs[i].count + '-q-' + theSearch, 
+							    paneObjs[i].div + '_results', theSearch,
+							    true, false);
+					    }//for
+				    }//if
+				    document.getElementById("jamun_intro").style.visibility = 'hidden'; 
+			    }//if
+		    }//finishForm
 
-		function clearSearch() {
-			if (query != null) {
-				query = null;
-				window.location.replace("./");
-			} else
-				clearSearchInfo();
-		}//clearSearch
+		    function clearSearch() {
+			    if (query != null) {
+				    query = null;
+				    window.location.replace("./");
+			    } else
+				    clearSearchInfo();
+		    }//clearSearch
 
-                function ezProxyLinks(classname, node, prefix) {
-                        if(!node) node = document.getElementsByTagName("body")[0];
-                        try {   
-                                var cselinks = node.getElementsByTagName("a");
-                                for(var i=0;i < cselinks.length; i++) {
-                                        var cName = cselinks[i].className + "";
-                                        if(cName.indexOf(classname) != -1) {
-                                                if (cselinks[i].href) {
-                                                        var tmpLink = cselinks[i].href + "";
-                                                        if (tmpLink.indexOf("google") == -1 &&
-								tmpLink.indexOf(prefix) == -1) 
-							{
-                                                                cselinks[i].href = prefix +
-                                                                        tmpLink;
-                                                        }//if tmpLink
-                                                }//if cselinks
-                                        }//if cName
-                                }//for
-                        } catch(ex) {
-                                return false;
-                        }//try
-                        return true;
-                }//ezProxyLinks
+            function ezProxyLinks(classname, node, prefix) {
+                if(!node) node = document.getElementsByTagName("body")[0];
+                try {   
+                    var cselinks = node.getElementsByTagName("a");
+                    for(var i=0;i < cselinks.length; i++) {
+                        var cName = cselinks[i].className + "";
+                        if(cName.indexOf(classname) != -1) {
+                            if (cselinks[i].href) {
+                                var tmpLink = cselinks[i].href + "";
+                                if (tmpLink.indexOf("google") == -1 &&
+                                    tmpLink.indexOf(prefix) == -1) 
+                                {
+                                    cselinks[i].href = prefix +
+                                        tmpLink;
+                                }//if tmpLink
+                            }//if cselinks
+                        }//if cName
+                    }//for
+                } catch(ex) {
+                    return false;
+                }//try
+                        
+                return true;
+            }//ezProxyLinks
 
 	</script>
 	<div id="spjournal_results"></div>
